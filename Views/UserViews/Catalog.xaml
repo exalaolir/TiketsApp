@@ -1,0 +1,139 @@
+﻿<Page
+    x:Class="TiketsApp.Views.UserViews.Catalogxaml"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:TiketsApp.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TiketsApp.Views.UserViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:usersvm="clr-namespace:TiketsApp.ViewModels.UsersVm"
+    Title="Catalogxaml"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource BaseFluentPageStyle}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <converters:InverseBoolToVisibleConverter x:Key="InverseBoolToVisibleConverter" />
+    </Page.Resources>
+    <Border Margin="3" Style="{StaticResource FluentCardBorderStyle}">
+        <Grid>
+            <DockPanel LastChildFill="True" Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Header="uujuhjui" />
+                </Menu>
+
+                <ScrollViewer>
+                    <ItemsControl ItemsSource="{Binding Events}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type usersvm:EventCardVM}">
+                                <Border
+                                    Margin="15"
+                                    Background="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="2"
+                                    CornerRadius="10">
+                                    <Grid Margin="5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="auto" />
+                                            <ColumnDefinition Width="400" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Rectangle
+                                            Grid.Column="0"
+                                            Width="240"
+                                            Height="200"
+                                            Margin="0,0,10,0"
+                                            RadiusX="8"
+                                            RadiusY="8">
+                                            <Rectangle.Fill>
+                                                <ImageBrush ImageSource="{Binding Path}" Stretch="UniformToFill" />
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding Title}" />
+
+                                            <TextBlock Grid.Row="1">
+                                                <Run FontWeight="Medium" Text="Начало: " />
+                                                <Run Text="{Binding Start, Mode=OneWay}" />
+                                            </TextBlock>
+
+                                            <TextBlock Grid.Row="2">
+                                                <Run FontWeight="Medium" Text="Цена: " />
+                                                <Run Text="{Binding Price, Mode=OneWay}" />
+                                            </TextBlock>
+
+                                            <TextBlock Grid.Row="3" TextWrapping="Wrap">
+                                                <Run FontWeight="Medium" Text="Описание: " />
+                                                <Run Text="{Binding Desciption, Mode=OneWay}" />
+                                            </TextBlock>
+
+                                            <WrapPanel Grid.Row="4">
+                                                <Button 
+                                                    Command="{Binding WatchPriview}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="0,0,10,0" Style="{DynamicResource AccentButtonStyle}">Подробнее</Button>
+                                                <Button Margin="0,0,10,0">Забронировать</Button>
+                                            </WrapPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource InverseBoolToVisibleConverter}}">
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="4" />
+
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                    StrokeDashArray="0.1 1.9"
+                    StrokeDashCap="Round"
+                    StrokeThickness="4">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="(Ellipse.RenderTransform).(RotateTransform.Angle)"
+                                        From="0"
+                                        To="360"
+                                        Duration="0:0:1.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Grid>
+        </Grid>
+    </Border>
+</Page>

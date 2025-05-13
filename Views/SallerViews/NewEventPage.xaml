@@ -1,0 +1,424 @@
+﻿<Page
+    x:Class="TiketsApp.Views.SallerViews.NewEventPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:admin="clr-namespace:TiketsApp.ViewModels.Admin"
+    xmlns:converters="clr-namespace:TiketsApp.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TiketsApp.Views.SallerViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:TiketsApp.Models"
+    xmlns:saller="clr-namespace:TiketsApp.ViewModels.Saller"
+    Title="NewEventPage"
+    d:DataContext="{d:DesignInstance Type=saller:NewEventVM}"
+    Style="{StaticResource BaseFluentPageStyle}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <converters:InverseBoolToVisibleConverter x:Key="InverseBoolToVisibleConverter" />
+
+        <DataTemplate DataType="{x:Type admin:Default}">
+            <Grid>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Message}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type saller:ImagesPriviewVm}">
+            <Image Source="{Binding Image.Path}"/>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type saller:ImagesVm}">
+            <DockPanel LastChildFill="True">
+                <Menu DockPanel.Dock="Top">
+                    <MenuItem Command="{Binding DeleteCommand}" Header="Удалить" />
+                    <MenuItem IsHitTestVisible="False">
+                        <MenuItem.Header>
+                            <TextBlock>
+                                <Run Text="{Binding ImgCount, Mode=OneWay}" />
+                                <Run Text="/3" />
+                            </TextBlock>
+                        </MenuItem.Header>
+                    </MenuItem>
+                </Menu>
+
+                <ListView
+                    ItemsSource="{Binding Images}"
+                    SelectedValue="{Binding Image}"
+                    SelectionMode="Single">
+                    <ListView.ItemTemplate>
+                        <DataTemplate DataType="{x:Type models:Image}">
+                            <TextBlock Text="{Binding Name}" TextWrapping="WrapWithOverflow" />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </DockPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Border Style="{StaticResource FluentCardBorderStyle}">
+        <Grid>
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="35*" MaxWidth="400" />
+                    <ColumnDefinition Width="65*" />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0">
+                    <ScrollViewer>
+                        <StackPanel Margin="7">
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Название" />
+                                <TextBox
+                                    Grid.Row="1"
+                                    Style="{StaticResource FluentTextBoxStyle}"
+                                    Text="{Binding Title, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            </Grid>
+
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Описание" />
+                                <TextBox
+                                    Grid.Row="1"
+                                    Height="150"
+                                    Style="{StaticResource FluentTextBoxStyle}"
+                                    Text="{Binding Description, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Адрес" />
+                                <TextBox
+                                    Grid.Row="1"
+                                    Style="{StaticResource FluentTextBoxStyle}"
+                                    Text="{Binding Adress, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Цена(Br)" />
+                                <TextBox
+                                    Grid.Row="1"
+                                    Style="{StaticResource FluentTextBoxStyle}"
+                                    Text="{Binding PriceStr, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Кол-во" />
+                                <TextBox
+                                    Grid.Row="1"
+                                    IsEnabled="{Binding CanEditCount}"
+                                    Style="{StaticResource FluentTextBoxStyle}"
+                                    Text="{Binding MaxCount, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Корневая категория" />
+                                <ComboBox
+                                    Grid.Row="1"
+                                    ItemsSource="{Binding Categories}"
+                                    SelectedItem="{Binding RootCategory, Mode=TwoWay}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type models:Category}">
+                                            <Grid>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Подкатегория" />
+                                <ComboBox
+                                    Grid.Row="1"
+                                    IsEnabled="{Binding SubcatigoryVisible}"
+                                    ItemsSource="{Binding Subcategories}"
+                                    SelectedItem="{Binding Subcategory}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type models:Category}">
+                                            <Grid>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <CheckBox
+                                Margin="5,5,5,15"
+                                Content="Наличие мест"
+                                IsChecked="{Binding HasSeataMap}" />
+
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid Grid.Column="0" Margin="0,0,10,0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Content="Ряды" />
+                                    <TextBox
+                                        Grid.Row="1"
+                                        IsEnabled="{Binding HasSeataMap}"
+                                        Style="{StaticResource FluentTextBoxStyle}"
+                                        Text="{Binding Rows, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Content="Места на ряду" />
+                                    <TextBox
+                                        Grid.Row="1"
+                                        IsEnabled="{Binding HasSeataMap}"
+                                        Style="{StaticResource FluentTextBoxStyle}"
+                                        Text="{Binding Seats, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Дата начала" />
+                                <DatePicker
+                                    Grid.Row="1"
+                                    DisplayDateStart="{Binding CurrentEndDate}"
+                                    PreviewKeyDown="DatePicker_PreviewKeyDown"
+                                    PreviewTextInput="DatePicker_PreviewTextInput"
+                                    SelectedDate="{Binding StartDate}" />
+
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Время начала" />
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox
+                                        Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        ItemsSource="{Binding Hours}"
+                                        SelectedIndex="0"
+                                        SelectedItem="{Binding StartHourse}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ., StringFormat='{}{0:D2}'}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <ComboBox
+                                        Grid.Column="1"
+                                        ItemsSource="{Binding Minuts}"
+                                        SelectedIndex="0"
+                                        SelectedItem="{Binding StartMinuts}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ., StringFormat='{}{0:D2}'}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Дата конца" />
+                                <DatePicker
+                                    Grid.Row="1"
+                                    DisplayDateStart="{Binding CurrentEndDate}"
+                                    PreviewKeyDown="DatePicker_PreviewKeyDown"
+                                    PreviewTextInput="DatePicker_PreviewTextInput"
+                                    SelectedDate="{Binding EndDate}" />
+
+                            </Grid>
+
+                            <Grid Margin="5,5,5,15">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label Grid.Row="0" Content="Время конца" />
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
+
+                                    <ComboBox
+                                        Grid.Column="0"
+                                        Margin="0,0,10,0"
+                                        ItemsSource="{Binding Hours}"
+                                        SelectedIndex="0"
+                                        SelectedItem="{Binding EndHourse}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ., StringFormat='{}{0:D2}'}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <ComboBox
+                                        Grid.Column="1"
+                                        ItemsSource="{Binding Minuts}"
+                                        SelectedIndex="0"
+                                        SelectedItem="{Binding EndMinuts}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding ., StringFormat='{}{0:D2}'}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+
+                            <Button
+                                Margin="5,0,5,15"
+                               
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding AddImageCommand}"
+                                IsEnabled="{Binding AddImagesEnable}">
+                                Добавить изображение
+                            </Button>
+
+                            <Button
+                                Margin="5,0,5,0"
+                                Command="{Binding SaveCommand}"
+                                HorizontalAlignment="Stretch"
+                                IsEnabled="{Binding IsButtonEnabled}"
+                                Content="{Binding BtnText}"
+                                Style="{DynamicResource AccentButtonStyle}">
+                            </Button>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70*" />
+                        <RowDefinition
+                            Height="30*"
+                            MinHeight="200"
+                            MaxHeight="300" />
+                    </Grid.RowDefinitions>
+
+
+                    <ContentControl Margin="10" Grid.Row="0" Content="{Binding ImagePriviewVM}"/>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40*" />
+                            <ColumnDefinition
+                                Width="60*"
+                                MinWidth="400"
+                                MaxWidth="600" />
+                        </Grid.ColumnDefinitions>
+
+                        <Border
+                            Grid.Column="1"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="2"
+                            CornerRadius="10, 0, 0, 0">
+                            <ContentControl Content="{Binding ImageVM}" />
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Grid>
+
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource InverseBoolToVisibleConverter}}">
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="4" />
+
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                    StrokeDashArray="0.1 1.9"
+                    StrokeDashCap="Round"
+                    StrokeThickness="4">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="(Ellipse.RenderTransform).(RotateTransform.Angle)"
+                                        From="0"
+                                        To="360"
+                                        Duration="0:0:1.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Grid>
+        </Grid>
+    </Border>
+</Page>

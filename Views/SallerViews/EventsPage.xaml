@@ -1,0 +1,275 @@
+﻿<Page
+    x:Class="TiketsApp.Views.SallerViews.EventsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:admin="clr-namespace:TiketsApp.ViewModels.Admin"
+    xmlns:converters="clr-namespace:TiketsApp.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TiketsApp.Views.SallerViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:saller="clr-namespace:TiketsApp.ViewModels.Saller" d:DataContext="{d:DesignInstance Type=saller:EventsVM}"
+    Title="EventsPage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource BaseFluentPageStyle}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <converters:InverseBoolToVisibleConverter x:Key="InverseBoolToVisibleConverter" />
+
+        <DataTemplate DataType="{x:Type admin:Default}">
+            <Grid>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Message}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type saller:FullIventVM}">
+            <StackPanel Margin="5">
+                <TextBlock
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="{Binding Title}"
+                    TextWrapping="Wrap" />
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Описание: " />
+                    <Run Text="{Binding Description, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Адрес: " />
+                    <Run Text="{Binding Adress, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Цена билета: " />
+                    <Run Text="{Binding Cost, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Забронировано из максимума: " />
+                    <Run Text="{Binding Count, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Начало: " />
+                    <Run Text="{Binding StartDay, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock Margin="0,5,0,0" TextWrapping="Wrap">
+                    <Run FontWeight="Bold" Text="Конец: " />
+                    <Run Text="{Binding EndDay, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,5,0,0"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding IsEnd, Converter={StaticResource InverseBoolToVisibleConverter}}">
+                    <Run FontWeight="Bold" Text="Статус: " />
+                    <Run Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="{Binding Status, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,5,0,0"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding IsEnd, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Run FontWeight="Bold" Text="Статус: " />
+                    <Run Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}" Text="{Binding Status, Mode=OneWay}" />
+                </TextBlock>
+
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*" />
+                        <ColumnDefinition Width="50*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        IsEnabled="{Binding IsEndReverse}"
+                        Grid.Column="0"
+                        Margin="0,0,5,0"
+                        Command="{Binding ChangeCommand}"
+                        CommandParameter="{Binding}"
+                        Style="{DynamicResource AccentButtonStyle}"
+                        HorizontalAlignment="Stretch">
+                        Изменить
+                    </Button>
+
+                    <Button
+                        IsEnabled="{Binding IsEndReverse}"
+                        Grid.Column="1"
+                        Margin="5,0,0,0"
+                        HorizontalAlignment="Stretch">
+                        Удалить
+                    </Button>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Border Margin="3" Style="{StaticResource FluentCardBorderStyle}">
+        <Grid>
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition
+                        Width="25*"
+                        MinWidth="300"
+                        MaxWidth="400" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Grid.Column="0" LastChildFill="True">
+                    <Menu DockPanel.Dock="Top">
+                        <MenuItem Command="{Binding ChangeCommand}" Header="Новое мероприятие" />
+                    </Menu>
+
+                    <ScrollViewer>
+                        <ItemsControl ItemsSource="{Binding Events}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type saller:IventCardVM}">
+                                    <Border
+                                        Margin="10"
+                                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                                        BorderThickness="2"
+                                        CornerRadius="10"
+                                        MouseEnter="Border_MouseEnter">
+
+                                        <Border.InputBindings>
+                                            <MouseBinding Command="{Binding GetFullInfoCommand}" MouseAction="LeftClick" />
+                                        </Border.InputBindings>
+
+                                        <Border.Resources>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{DynamicResource SolidBackgroundFillColorBaseBrush}" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource SolidBackgroundFillColorBaseAltBrush}" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Resources>
+                                        <Grid
+                                            Width="250"
+                                            Height="100"
+                                            Margin="5">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <Grid Grid.Row="0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="auto" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    Grid.Column="0"
+                                                    Margin="0,0,10,0"
+                                                    Style="{StaticResource SubtitleTextBlockStyle}"
+                                                    Text="{Binding Title}"
+                                                    TextTrimming="CharacterEllipsis" />
+
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="{Binding Count}" />
+                                            </Grid>
+
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Text="{Binding Description}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap" />
+
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{Binding Status}"
+                                                Visibility="{Binding IsEnd, Converter={StaticResource InverseBoolToVisibleConverter}}" />
+
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Foreground="{DynamicResource AccentTextFillColorPrimaryBrush}"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{Binding Status}"
+                                                Visibility="{Binding IsEnd, Converter={StaticResource BoolToVisibleConverter}}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </DockPanel>
+
+                <Border
+                    Grid.Column="1"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="25*" />
+                            <RowDefinition Height="45*" />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.Row="0"
+                            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="0,0,0,1">
+                            <ContentControl Content="{Binding FullCardInfoVM}" />
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource InverseBoolToVisibleConverter}}">
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="4" />
+
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                    StrokeDashArray="0.1 1.9"
+                    StrokeDashCap="Round"
+                    StrokeThickness="4">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="(Ellipse.RenderTransform).(RotateTransform.Angle)"
+                                        From="0"
+                                        To="360"
+                                        Duration="0:0:1.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Grid>
+        </Grid>
+
+    </Border>
+</Page>

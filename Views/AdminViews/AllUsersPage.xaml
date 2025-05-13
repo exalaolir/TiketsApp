@@ -1,0 +1,265 @@
+﻿<Page
+    x:Class="TiketsApp.Views.AdminViews.AllUsersPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:admin="clr-namespace:TiketsApp.ViewModels.Admin"
+    xmlns:converters="clr-namespace:TiketsApp.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TiketsApp.Views.AdminViews"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="AllUsersPage"
+    d:DataContext="{d:DesignInstance Type=admin:AllUsersManagmentViewModel}"
+    Style="{StaticResource BaseFluentPageStyle}"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <converters:InverseBoolToVisibleConverter x:Key="InverseBoolToVisibleConverter" />
+
+        <DataTemplate DataType="{x:Type admin:Default}">
+            <Grid>
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Style="{StaticResource CaptionTextBlockStyle}"
+                    Text="{Binding Message}" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type admin:UserCard}">
+            <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Информация" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Fio}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Type}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Email}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding RegistrationDate}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Age}" />
+                <TextBlock
+                    Margin="0,10,0,0"
+                    Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,10,0,0"
+                    Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource InverseBoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+
+        <DataTemplate DataType="{x:Type admin:SallerCard}">
+            <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Информация" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Fio}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Type}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Email}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Num}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding RegistrationDate}" />
+
+                <TextBlock
+                    Margin="0,10,0,10"
+                    Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,10,0,10"
+                    Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource InverseBoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+
+                <Grid Visibility="{Binding IsNowRegister, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button
+                        Grid.Column="0"
+                        Command="{Binding ConfirmCommand}"
+                        Style="{DynamicResource AccentButtonStyle}">
+                        Принять заявку
+                    </Button>
+
+                    <Button Grid.Column="1" Command="{Binding RejectCommand}">
+                        Отклонить заявку
+                    </Button>
+
+                </Grid>
+
+
+            </StackPanel>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type admin:AdminCard}">
+            <StackPanel Margin="5,0,5,0" Orientation="Vertical">
+                <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="Информация" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Fio}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Type}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding Email}" />
+                <TextBlock Margin="0,10,0,0" Text="{Binding RegistrationDate}" />
+
+                <TextBlock
+                    Margin="0,10,0,0"
+                    Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource BoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+
+                <TextBlock
+                    Margin="0,10,0,0"
+                    Foreground="{DynamicResource SystemFillColorSuccessBrush}"
+                    Visibility="{Binding Banned, Converter={StaticResource InverseBoolToVisibleConverter}}">
+                    <Run Text="Статус: " />
+                    <Run Text="{Binding StatusText, Mode=OneWay}" />
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+
+
+    </Page.Resources>
+
+    <Border Margin="3" Style="{StaticResource FluentCardBorderStyle}">
+        <Grid>
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="75*" />
+                    <ColumnDefinition
+                        Width="25*"
+                        MinWidth="300"
+                        MaxWidth="350" />
+                </Grid.ColumnDefinitions>
+
+                <DockPanel Grid.Column="0" LastChildFill="True">
+                    <Menu Margin="7,0,0,0" DockPanel.Dock="Top">
+                        <MenuItem Header="Роли">
+                            <StackPanel>
+                                <CheckBox Content="Организаторы" IsChecked="{Binding SallerChecked}" />
+                                <CheckBox Content="Администраторы" IsChecked="{Binding AdminChecked}" />
+                                <CheckBox Content="Пользователи" IsChecked="{Binding UserChecked}" />
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding SelectCategoris}"
+                                    Style="{DynamicResource AccentButtonStyle}">
+                                    Выбрать
+                                </Button>
+                            </StackPanel>
+                        </MenuItem>
+
+                        <MenuItem Header="Статусы">
+                            <MenuItem Command="{Binding SelectBanned}" Header="Показывать забаненных" />
+
+                            <MenuItem Command="{Binding SelectMsgs}" Header="Показывать только заявки" />
+                        </MenuItem>
+
+                        <MenuItem Header="Управление">
+                            <MenuItem
+                                Command="{Binding BunCommand}"
+                                CommandParameter="{Binding CurrentModel}"
+                                Header="Забанить"
+                                IsEnabled="{Binding BanEnable}" />
+                            <MenuItem
+                                Command="{Binding UnbunCommand}"
+                                CommandParameter="{Binding CurrentModel}"
+                                Header="Разбанить"
+                                IsEnabled="{Binding UnbunEnable}" />
+                        </MenuItem>
+                    </Menu>
+                    <ScrollViewer>
+                        <ListView
+                            ItemsSource="{Binding AllUsers}"
+                            SelectedItem="{Binding SelectedItem}"
+                            SelectionMode="Single">
+                            <ListView.ItemTemplate>
+                                <DataTemplate DataType="{x:Type admin:ShortUserCard}">
+                                    <Border
+                                        Background="{DynamicResource LayerFillColorDefaultBrush}"
+                                        BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="5">
+                                        <Grid Margin="5,8,5,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50*" />
+                                                <ColumnDefinition Width="25*" />
+                                                <ColumnDefinition Width="25*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{Binding Fio}" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{Binding Type}" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                                                Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                Text="{Binding VishedText}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </ScrollViewer>
+                </DockPanel>
+
+                <Border
+                    Grid.Column="1"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1,0,0,0">
+                    <ContentControl Content="{Binding CurrentModel}" />
+                </Border>
+
+            </Grid>
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource InverseBoolToVisibleConverter}}">
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="4" />
+
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                    StrokeDashArray="0.1 1.9"
+                    StrokeDashCap="Round"
+                    StrokeThickness="4">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="(Ellipse.RenderTransform).(RotateTransform.Angle)"
+                                        From="0"
+                                        To="360"
+                                        Duration="0:0:1.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Grid>
+        </Grid>
+    </Border>
+</Page>

@@ -1,0 +1,243 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style
+        x:Key="BaseFluentWindowStyle"
+        BasedOn="{StaticResource {x:Type Window}}"
+        TargetType="Window" />
+
+    <Style
+        x:Key="BaseListViewStyle"
+        BasedOn="{StaticResource {x:Type ListView}}"
+        TargetType="ListView" />
+
+    <Style
+        x:Key="WindowStyle"
+        BasedOn="{StaticResource BaseFluentWindowStyle}"
+        TargetType="Window">
+        <Setter Property="MinWidth" Value="950" />
+        <Setter Property="MinHeight" Value="700" />
+    </Style>
+
+    <Style
+        x:Key="BaseFluentPageStyle"
+        BasedOn="{StaticResource {x:Type Page}}"
+        TargetType="Page" />
+
+    <Style
+        x:Key="PageStyle"
+        BasedOn="{StaticResource BaseFluentPageStyle}"
+        TargetType="Page">
+        <Setter Property="MinWidth" Value="650" />
+        <Setter Property="MinHeight" Value="800" />
+    </Style>
+
+    <Style x:Key="BaseFluentBorderStyle" TargetType="Border" />
+    <Style
+    x:Key="FluentCardBorderStyle"
+    BasedOn="{StaticResource BaseFluentBorderStyle}"
+    TargetType="Border">
+
+        <Style.Triggers>
+            <EventTrigger RoutedEvent="Loaded">
+                <EventTrigger.Actions>
+                    <BeginStoryboard>
+                        <Storyboard TargetProperty="Opacity">
+                            <DoubleAnimation
+                            SpeedRatio="3.2"
+                            From="0"
+                            To="1" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger.Actions>
+            </EventTrigger>
+        </Style.Triggers>
+    </Style>
+    
+    <Style
+        x:Key="FluentTextBoxStyle"
+        BasedOn="{StaticResource {x:Type TextBox}}"
+        TargetType="TextBox">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="Validation.ErrorTemplate">
+            <Setter.Value>
+                <ControlTemplate />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid x:Name="Grid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="Col1">
+                                <ColumnDefinition.Width>
+                                    <GridLength>1*</GridLength>
+                                </ColumnDefinition.Width>
+                            </ColumnDefinition>
+
+                        </Grid.ColumnDefinitions>
+
+                        <Border
+                            x:Name="Border0"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding Margin}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+                            BorderThickness="0"
+                            CornerRadius="5">
+                            <Border
+                                x:Name="Border"
+                                Margin="0"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                                <ScrollViewer x:Name="PART_ContentHost" />
+                            </Border>
+                        </Border>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Validation.HasError" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter TargetName="Border0" Property="BorderThickness" Value="0.5,0.7,0.5,0" />
+
+
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="True">
+                <Setter Property="Margin" Value="0,0,0,0" />
+                <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <Style
+        x:Key="FluentPassBoxStyle"
+        BasedOn="{StaticResource {x:Type PasswordBox}}"
+        TargetType="PasswordBox">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Grid x:Name="Grid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="Col1">
+                                <ColumnDefinition.Width>
+                                    <GridLength>1*</GridLength>
+                                </ColumnDefinition.Width>
+                            </ColumnDefinition>
+
+                        </Grid.ColumnDefinitions>
+
+                        <Border
+                            x:Name="Border0"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding Margin}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+                            BorderThickness="0"
+                            CornerRadius="5">
+                            <Border
+                                x:Name="Border"
+                                Margin="0"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                                <ScrollViewer x:Name="PART_ContentHost" />
+                            </Border>
+                        </Border>
+
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding HasPasswordErrors}" Value="True" >
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter TargetName="Border0" Property="BorderThickness" Value="0.5,0.7,0.5,0" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding HasPasswordErrors}" Value="True">
+                <Setter Property="Margin" Value="0,0,0,0" />
+                <Setter Property="ToolTip" Value="{Binding PasswordError}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+
+    <Style
+    x:Key="FluentRepeatPassBoxStyle"
+    BasedOn="{StaticResource {x:Type PasswordBox}}"
+    TargetType="PasswordBox">
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="ToolTipService.InitialShowDelay" Value="0" />
+        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Grid x:Name="Grid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="Col1">
+                                <ColumnDefinition.Width>
+                                    <GridLength>1*</GridLength>
+                                </ColumnDefinition.Width>
+                            </ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+
+                        <Border
+                            x:Name="Border0"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding Margin}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{DynamicResource ControlStrokeColorOnAccentTertiaryBrush}"
+                            BorderThickness="0"
+                            CornerRadius="5">
+                            <Border
+                                x:Name="Border"
+                                Margin="0"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                                <ScrollViewer x:Name="PART_ContentHost" />
+                            </Border>
+                        </Border>
+                        
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding HasRepeatPasswordErrors}" Value="True">
+                            <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource SystemFillColorCriticalBrush}" />
+                            <Setter TargetName="Border" Property="BorderThickness" Value="0,0,0,1" />
+                            <Setter TargetName="Border0" Property="BorderThickness" Value="0.5,0.7,0.5,0" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding HasRepeatPasswordErrors}" Value="True">
+                <Setter Property="Margin" Value="0,0,10,0" />
+                <Setter Property="ToolTip" Value="{Binding RepeatPasswordError}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>
