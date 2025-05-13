@@ -396,7 +396,7 @@ namespace TiketsApp.ViewModels.Saller
                 var startDate = StartDate.Date + new TimeSpan(StartHourse, StartMinuts, 0);
                 var endDate = EndDate.Date + new TimeSpan(EndHourse, EndMinuts, 0);
 
-                if (startDate > endDate)
+                if (startDate >= endDate)
                 {
                     SetValidationResults(false, nameof(Title), ["Конечная дата не может быть больше начальной"]);
                     return;
