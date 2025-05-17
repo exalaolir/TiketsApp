@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TiketsApp;
 
@@ -11,9 +12,11 @@ using TiketsApp;
 namespace TiketsApp.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20250514021511_Order2")]
+    partial class Order2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,9 +93,6 @@ namespace TiketsApp.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<int>("MaxCount")
                         .HasColumnType("int");
 
@@ -148,46 +148,6 @@ namespace TiketsApp.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("TiketsApp.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Cost")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Row")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SallerId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Seat")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EventId");
-
-                    b.HasIndex("SallerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("TiketsApp.Models.Role", b =>
@@ -318,33 +278,6 @@ namespace TiketsApp.Migrations
                     b.Navigation("SubCategory");
                 });
 
-            modelBuilder.Entity("TiketsApp.Models.Order", b =>
-                {
-                    b.HasOne("TiketsApp.Models.Event", "Event")
-                        .WithMany("Orders")
-                        .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TiketsApp.Models.Saller", "Saller")
-                        .WithMany("Orders")
-                        .HasForeignKey("SallerId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("TiketsApp.Models.User", "User")
-                        .WithMany("Orders")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Event");
-
-                    b.Navigation("Saller");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("TiketsApp.Models.Category", b =>
                 {
                     b.Navigation("ChildCategories");
@@ -352,21 +285,9 @@ namespace TiketsApp.Migrations
                     b.Navigation("Events");
                 });
 
-            modelBuilder.Entity("TiketsApp.Models.Event", b =>
-                {
-                    b.Navigation("Orders");
-                });
-
             modelBuilder.Entity("TiketsApp.Models.Saller", b =>
                 {
                     b.Navigation("Events");
-
-                    b.Navigation("Orders");
-                });
-
-            modelBuilder.Entity("TiketsApp.Models.User", b =>
-                {
-                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

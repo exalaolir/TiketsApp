@@ -182,12 +182,13 @@
                             </Grid>
 
                             <CheckBox
+                                Visibility="{Binding CanChangeRowsAndSeats, Converter={StaticResource InverseBoolToVisibleConverter}}"
                                 Margin="5,5,5,15"
                                 Content="Наличие мест"
                                 IsChecked="{Binding HasSeataMap}" />
 
 
-                            <Grid Margin="5,5,5,15">
+                            <Grid Margin="5,5,5,15"  Visibility="{Binding CanChangeRowsAndSeats, Converter={StaticResource InverseBoolToVisibleConverter}}">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />
                                     <ColumnDefinition />

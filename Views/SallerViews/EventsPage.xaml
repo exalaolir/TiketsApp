@@ -7,8 +7,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:TiketsApp.Views.SallerViews"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:saller="clr-namespace:TiketsApp.ViewModels.Saller" d:DataContext="{d:DesignInstance Type=saller:EventsVM}"
+    xmlns:models="clr-namespace:TiketsApp.Models"
+    xmlns:saller="clr-namespace:TiketsApp.ViewModels.Saller"
     Title="EventsPage"
+    d:DataContext="{d:DesignInstance Type=saller:EventsVM}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     Style="{StaticResource BaseFluentPageStyle}"
@@ -87,21 +89,23 @@
                     </Grid.ColumnDefinitions>
 
                     <Button
-                        IsEnabled="{Binding IsEndReverse}"
                         Grid.Column="0"
                         Margin="0,0,5,0"
+                        HorizontalAlignment="Stretch"
                         Command="{Binding ChangeCommand}"
                         CommandParameter="{Binding}"
-                        Style="{DynamicResource AccentButtonStyle}"
-                        HorizontalAlignment="Stretch">
+                        IsEnabled="{Binding IsEndReverse}"
+                        Style="{DynamicResource AccentButtonStyle}">
                         Изменить
                     </Button>
 
                     <Button
-                        IsEnabled="{Binding IsEndReverse}"
                         Grid.Column="1"
                         Margin="5,0,0,0"
-                        HorizontalAlignment="Stretch">
+                        HorizontalAlignment="Stretch"
+                        Command="{Binding DeleteCommand}"
+                        CommandParameter="{Binding}"
+                        IsEnabled="{Binding IsEndReverse}">
                         Удалить
                     </Button>
                 </Grid>
@@ -219,9 +223,8 @@
                     BorderThickness="1,0,0,0">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="25*" />
-                            <RowDefinition Height="45*" />
+                            <RowDefinition Height="auto" MinHeight="300" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <Border
@@ -230,6 +233,54 @@
                             BorderThickness="0,0,0,1">
                             <ContentControl Content="{Binding FullCardInfoVM}" />
                         </Border>
+
+                        <DockPanel
+                            Grid.Row="1"
+                            Margin="5"
+                            LastChildFill="True">
+
+                            <TextBlock DockPanel.Dock="Top" Margin="0, 0, 0, 10" Text="Клиенты" Style="{StaticResource SubtitleTextBlockStyle}"/>
+
+                            <ScrollViewer>
+                                <ItemsControl ItemsSource="{Binding Users}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type models:User}">
+                                            <Expander>
+                                                <Expander.Header>
+                                                    <TextBlock Style="{StaticResource BodyStrongTextBlockStyle}">
+                                                        <Run Text="{Binding Surname}" />
+                                                        <Run Text=" " />
+                                                        <Run Text="{Binding Name}" />
+                                                    </TextBlock>
+                                                </Expander.Header>
+                                                <StackPanel>
+                                                    <TextBlock>
+                                                        <Run FontWeight="Medium" Text="Id: " />
+                                                        <Run Text="{Binding Id}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock>
+                                                        <Run FontWeight="Medium" Text="Email: " />
+                                                        <Run Text="{Binding Email}" />
+                                                    </TextBlock>
+
+
+                                                    <TextBlock>
+                                                        <Run FontWeight="Medium" Text="Дата рождения: " />
+                                                        <Run Text="{Binding Birthday, StringFormat=\{0:d\}}" />
+                                                    </TextBlock>
+
+                                                    <TextBlock>
+                                                        <Run FontWeight="Medium" Text="Дата регистрации: " />
+                                                        <Run Text="{Binding DateOfRegistration, StringFormat=\{0:d\}}" />
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </Expander>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </DockPanel>
                     </Grid>
                 </Border>
             </Grid>

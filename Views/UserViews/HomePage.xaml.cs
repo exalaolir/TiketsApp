@@ -32,7 +32,7 @@ namespace TiketsApp.Views.UserViews
             {
                 var vm = DataContext as UserControlVm;
                 vm!.Subnavigator = navigator;
-               // vm.NavigateToEventsCommand.Execute(null);
+                vm.NavigateTuHabCommand.Execute(null);
             };
         }
     }

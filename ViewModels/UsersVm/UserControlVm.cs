@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using TiketsApp.Core.Servises;
 using TiketsApp.ViewModels.Base;
 using TiketsApp.ViewModels.RegistrationVM;
@@ -40,11 +35,15 @@ namespace TiketsApp.ViewModels.UsersVm
             RefreshCommand = new Command(() => Subnavigator!.Reload(param));
 
             NavigateToCatalogCommand = new Command(() => Subnavigator!.NavigateTo<Catalogxaml>(typeof(CatalogVM), param));
+
+            NavigateTuHabCommand = new Command(() => Subnavigator!.NavigateTo<HabPage>(typeof(HabVM), param));
         }
 
         public override ICommand ExitCommand { get; }
         public override ICommand BackCommand { get; }
         public override ICommand FrontCommand { get; }
         public override ICommand RefreshCommand { get; }
+
+        public ICommand NavigateTuHabCommand { get; }
     }
 }

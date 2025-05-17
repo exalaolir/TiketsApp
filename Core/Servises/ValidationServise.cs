@@ -33,7 +33,7 @@ namespace TiketsApp.Core.Servises
             return (noErrors, errors);
         }
 
-        internal static async Task<List<ValidatorResult>> ValidateOnRegister<T>(T newValue) where T : Role
+        internal static async Task<List<ValidatorResult>> ValidateOnRegister<T>(T newValue, int? id = null) where T : Role
         {
             List<ValidatorResult> results = [];
             using AppContext dbContext = new();
@@ -41,6 +41,8 @@ namespace TiketsApp.Core.Servises
 
             await foreach( var user in dbContext.AllRoles.AsNoTracking().AsAsyncEnumerable())
             {
+                if(user.Id == id) continue;
+
                 if(newValue.Email == user.Email)
                 {
                     results.Add((

@@ -33,6 +33,7 @@ namespace TiketsApp.Core.Servises
             _ when type == typeof(NewEventPage) => new NewEventPage(),
             _ when type == typeof(Catalogxaml) => new Catalogxaml(),
             _ when type == typeof(PriviewPage) => new PriviewPage(),
+            _ when type == typeof(HabPage) => new HabPage(),
             _ => throw new NotSupportedException()
         };
 
@@ -50,6 +51,7 @@ namespace TiketsApp.Core.Servises
             _ when type == typeof(NewEventVM) => new NewEventVM(param, navigator),
             _ when type == typeof(CatalogVM) => new CatalogVM(param, navigator),
             _ when type == typeof(PriviewVM) => new PriviewVM(param, navigator),
+            _ when type == typeof(HabVM) => new HabVM(param, navigator),
             _ => throw new NotSupportedException()
         };
     }

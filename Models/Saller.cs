@@ -13,5 +13,7 @@ namespace TiketsApp.Models
         public bool? IsNowRegister { get; set; } = false;
 
         public List<Event> Events { get; set; } = new List<Event>();
+
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

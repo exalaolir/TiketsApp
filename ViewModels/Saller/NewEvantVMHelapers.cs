@@ -54,6 +54,9 @@ namespace TiketsApp.ViewModels.Saller
             }
         }
 
+
+        public bool CanChangeRowsAndSeats { get; private set; }
+
         public DateTime CurrentDate
         {
             get => _currentDate;
@@ -109,7 +112,7 @@ namespace TiketsApp.ViewModels.Saller
 
         public void OnDayChanged ( object? sender, EventArgs e )
         {
-            CurrentDate = DateTime.Today;
+            CurrentDate = DateTime.Today.AddDays(1);
             _timer.Interval = IDateTimer.CalculateTimeUntilMidnight();
         }
 

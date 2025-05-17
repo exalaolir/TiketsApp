@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TiketsApp;
 
@@ -11,9 +12,11 @@ using TiketsApp;
 namespace TiketsApp.Migrations
 {
     [DbContext(typeof(AppContext))]
-    partial class AppContextModelSnapshot : ModelSnapshot
+    [Migration("20250514022456_Order4")]
+    partial class Order4
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,9 +93,6 @@ namespace TiketsApp.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<int>("MaxCount")
                         .HasColumnType("int");
 
@@ -164,28 +164,40 @@ namespace TiketsApp.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("EventId1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Row")
                         .HasColumnType("int");
 
                     b.Property<int>("SallerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("SallerId1")
+                        .HasColumnType("int");
+
                     b.Property<int?>("Seat")
                         .HasColumnType("int");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("UserId1")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
 
+                    b.HasIndex("EventId1");
+
                     b.HasIndex("SallerId");
 
+                    b.HasIndex("SallerId1");
+
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Orders");
                 });
@@ -321,22 +333,34 @@ namespace TiketsApp.Migrations
             modelBuilder.Entity("TiketsApp.Models.Order", b =>
                 {
                     b.HasOne("TiketsApp.Models.Event", "Event")
-                        .WithMany("Orders")
+                        .WithMany()
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TiketsApp.Models.Saller", "Saller")
+                    b.HasOne("TiketsApp.Models.Event", null)
                         .WithMany("Orders")
+                        .HasForeignKey("EventId1");
+
+                    b.HasOne("TiketsApp.Models.Saller", "Saller")
+                        .WithMany()
                         .HasForeignKey("SallerId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TiketsApp.Models.User", "User")
+                    b.HasOne("TiketsApp.Models.Saller", null)
                         .WithMany("Orders")
+                        .HasForeignKey("SallerId1");
+
+                    b.HasOne("TiketsApp.Models.User", "User")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("TiketsApp.Models.User", null)
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("Event");
 

@@ -6,9 +6,12 @@ using System.Threading.Tasks;
 
 namespace TiketsApp.Models.DTO
 {
-    class PriviewEventDto(User user, Event newEvent)
+    class PriviewEventDto(User user, Event newEvent, Order? order = null)
     {
         public User User => user;
-        public Event Event => newEvent; 
+
+        public Event Event => newEvent;
+
+        public Order? Order => order;
     }
 }

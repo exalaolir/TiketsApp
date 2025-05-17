@@ -19,6 +19,8 @@ namespace TiketsApp
         public DbSet<Image> Images { get; set; }
         public DbSet<Event> Events { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+
         protected override void OnConfiguring ( DbContextOptionsBuilder optionsBuilder )
         {
             optionsBuilder.UseSqlServer(Consts.SqlConnection);
@@ -27,16 +29,40 @@ namespace TiketsApp
         protected override void OnModelCreating ( ModelBuilder modelBuilder )
         {
             modelBuilder.Entity<Category>()
-                .HasMany(c => c.Events)       
-                .WithOne(e => e.RootCategory)    
-                .HasForeignKey(e => e.RootCategoryId); 
+                .HasMany(c => c.Events)
+                .WithOne(e => e.RootCategory)
+                .HasForeignKey(e => e.RootCategoryId);
 
-            
+
             modelBuilder.Entity<Event>()
                 .HasOne(e => e.SubCategory)
                 .WithMany()
                 .HasForeignKey(e => e.SubCategoryId)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Event>()
+                .HasMany(e => e.Orders)
+                .WithOne(o => o.Event)
+                .HasForeignKey(o => o.EventId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //modelBuilder.Entity<Order>()
+            //       .HasOne(o => o.Event)
+            //       .WithMany(e => e.Orders) 
+            //       .HasForeignKey(o => o.EventId)
+            //       .OnDelete(DeleteBehavior.NoAction); 
+
+            modelBuilder.Entity<Order>()
+                  .HasOne(o => o.User)
+                  .WithMany(u => u.Orders)
+                  .HasForeignKey(o => o.UserId)
+                  .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Order>()
+                  .HasOne(o => o.Saller)
+                  .WithMany(s => s.Orders)
+                  .HasForeignKey(o => o.SallerId)
+                  .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

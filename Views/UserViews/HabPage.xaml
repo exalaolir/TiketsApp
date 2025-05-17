@@ -1,0 +1,310 @@
+﻿<Page
+    x:Class="TiketsApp.Views.UserViews.HabPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:TiketsApp.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:TiketsApp.Views.UserViews"
+    xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:TiketsApp.Models"
+    xmlns:usersvm="clr-namespace:TiketsApp.ViewModels.UsersVm"
+    Title="HabPage"
+    d:DataContext="{d:DesignInstance Type=usersvm:HabVM}"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Style="{StaticResource BaseFluentPageStyle}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <converters:BoolToVisibleConverter x:Key="BoolToVisibleConverter" />
+        <converters:InverseBoolToVisibleConverter x:Key="InverseBoolToVisibleConverter" />
+        <converters:StatusToColorTextConverter x:Key="StatusToColorTextConverter" />
+    </Page.Resources>
+
+    <Border Margin="3" Style="{StaticResource FluentCardBorderStyle}">
+        <Grid>
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30*" MaxWidth="350" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+
+                <Border
+                    Grid.Column="0"
+                    BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,1,0">
+                    <StackPanel
+                        Margin="5,2,5,2"
+                        VerticalAlignment="Center"
+                        Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
+                        <TextBlock
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource TitleLargeTextBlockStyle}"
+                            Text="Профиль" />
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Имя" />
+                            <TextBox
+                                Grid.Row="1"
+                                Style="{StaticResource FluentTextBoxStyle}"
+                                Text="{Binding Name, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Фамилия" />
+                            <TextBox
+                                Grid.Row="1"
+                                Style="{StaticResource FluentTextBoxStyle}"
+                                Text="{Binding Surname, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Дата рождения" />
+                            <DatePicker
+                                Grid.Row="1"
+                                DisplayDateEnd="{Binding CurrentDate}"
+                                PreviewKeyDown="DatePicker_PreviewKeyDown"
+                                PreviewTextInput="DatePicker_PreviewTextInput"
+                                SelectedDate="{Binding Birthday}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Email" />
+                            <TextBox
+                                Grid.Row="1"
+                                Style="{StaticResource FluentTextBoxStyle}"
+                                Text="{Binding Email, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Новый пароль" />
+                            <PasswordBox
+                                Grid.Row="1"
+                                PasswordChanged="SetPassword"
+                                Style="{StaticResource FluentPassBoxStyle}" />
+                        </Grid>
+
+                        <Grid Margin="0,0,0,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Label Grid.Row="0" Content="Повторите новый пароль" />
+                            <PasswordBox
+                                Grid.Row="1"
+                                PasswordChanged="SetRepeatPassword"
+                                Style="{StaticResource FluentRepeatPassBoxStyle}" />
+                        </Grid>
+
+                        <Button
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding ChageUserData}"
+                            IsEnabled="{Binding IsButtonEnabled}"
+                            Style="{DynamicResource AccentButtonStyle}">
+                            Изменить
+                        </Button>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="75*" />
+                        <RowDefinition
+                            Height="25*"
+                            MinHeight="280"
+                            MaxHeight="300" />
+                    </Grid.RowDefinitions>
+
+                    <TabControl Grid.Row="0" SelectedIndex="{Binding TabIndex}">
+                        <TabItem Header="Текущая бронь">
+                            <DockPanel LastChildFill="True">
+                                <Menu DockPanel.Dock="Top">
+                                    <MenuItem
+                                        Command="{Binding WatcCommand}"
+                                        Header="Просмотр"
+                                        IsEnabled="{Binding IsMenuEnable}" />
+                                    <MenuItem
+                                        Command="{Binding RejectCommand}"
+                                        Header="Отмена"
+                                        IsEnabled="{Binding IsMenuEnable}" />
+                                    <MenuItem
+                                        Command="{Binding DeleteAccept}"
+                                        Header="Понятно"
+                                        Visibility="{Binding DeleteEnable, Converter={StaticResource BoolToVisibleConverter}}" />
+                                </Menu>
+
+                                <ScrollViewer>
+                                    <ListView
+                                        ItemsSource="{Binding Orders}"
+                                        SelectedItem="{Binding CurrentEvent}"
+                                        SelectionMode="Single">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type models:Order}">
+                                                <Border
+                                                    Background="{DynamicResource LayerFillColorDefaultBrush}"
+                                                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="5">
+                                                    <Grid Margin="5,8,5,8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="37*" />
+                                                            <ColumnDefinition Width="30*" />
+                                                            <ColumnDefinition Width="33*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock
+                                                            Grid.Column="0"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                            Text="{Binding Event.Name}" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Margin="5,0,15,0"
+                                                            HorizontalAlignment="Stretch"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}">
+                                                            <Run Text="Начало: " />
+                                                            <Run Text="{Binding Event.StartTime, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                        <TextBlock
+                                                            Grid.Column="2"
+                                                            HorizontalAlignment="Stretch"
+                                                            Foreground="{Binding Status, Converter={StaticResource StatusToColorTextConverter}, ConverterParameter=Brush}"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}">
+                                                            <Run Text="Статус:" />
+                                                            <Run Text="{Binding Status, Mode=OneWay, Converter={StaticResource StatusToColorTextConverter}, ConverterParameter=Text}" />
+                                                        </TextBlock>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </TabItem>
+                        <TabItem Header="Прошедшая бронь" >
+                            <DockPanel LastChildFill="True">
+                                <Menu DockPanel.Dock="Top">
+                                    <MenuItem Header="Сортировка"></MenuItem>
+                                </Menu>
+
+                                <ScrollViewer>
+                                    <ListView
+                                        ItemsSource="{Binding History}"
+                                        
+                                        SelectionMode="Single">
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type models:Order}">
+                                                <Border
+                                                    Background="{DynamicResource LayerFillColorDefaultBrush}"
+                                                    BorderBrush="{DynamicResource ControlElevationBorderBrush}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="5">
+                                                    <Grid Margin="5,8,5,8">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="37*" />
+                                                            <ColumnDefinition Width="30*" />
+                                                            <ColumnDefinition Width="33*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock
+                                                            Grid.Column="0"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}"
+                                                            Text="{Binding Event.Name}" />
+                                                        <TextBlock
+                                                            Grid.Column="1"
+                                                            Margin="5,0,15,0"
+                                                            HorizontalAlignment="Stretch"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}">
+                                                            <Run Text="Начало: " />
+                                                            <Run Text="{Binding Event.StartTime, Mode=OneWay}" />
+                                                        </TextBlock>
+                                                        <TextBlock
+                                                            Grid.Column="2"
+                                                            HorizontalAlignment="Stretch"
+                                                            Foreground="{Binding Status, Converter={StaticResource StatusToColorTextConverter}, ConverterParameter=Brush}"
+                                                            Style="{StaticResource BodyStrongTextBlockStyle}">
+                                                            <Run Text="Статус:" />
+                                                            <Run Text="{Binding Status, Mode=OneWay, Converter={StaticResource StatusToColorTextConverter}, ConverterParameter=Text}" />
+                                                        </TextBlock>
+                                                    </Grid>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </ScrollViewer>
+                            </DockPanel>
+                        </TabItem>
+                    </TabControl>
+
+                    <Border
+                        Grid.Row="1"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="0,1,0,0">
+                        <lvc:CartesianChart
+                            LegendPosition="Right"
+                            Series="{Binding Series}"
+                            XAxes="{Binding XAxes}"
+                            YAxes="{Binding YAxes}" />
+                    </Border>
+                </Grid>
+            </Grid>
+
+
+            <Grid Visibility="{Binding DataLoaded, Converter={StaticResource InverseBoolToVisibleConverter}}">
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    Stroke="#E0E0E0"
+                    StrokeThickness="4" />
+
+
+                <Ellipse
+                    Width="60"
+                    Height="60"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                    StrokeDashArray="0.1 1.9"
+                    StrokeDashCap="Round"
+                    StrokeThickness="4">
+                    <Ellipse.RenderTransform>
+                        <RotateTransform Angle="0" />
+                    </Ellipse.RenderTransform>
+                    <Ellipse.Triggers>
+                        <EventTrigger RoutedEvent="Loaded">
+                            <BeginStoryboard>
+                                <Storyboard RepeatBehavior="Forever">
+                                    <DoubleAnimation
+                                        Storyboard.TargetProperty="(Ellipse.RenderTransform).(RotateTransform.Angle)"
+                                        From="0"
+                                        To="360"
+                                        Duration="0:0:1.5" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </Ellipse.Triggers>
+                </Ellipse>
+            </Grid>
+        </Grid>
+    </Border>
+</Page>

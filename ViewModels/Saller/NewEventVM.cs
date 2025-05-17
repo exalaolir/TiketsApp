@@ -255,7 +255,7 @@ namespace TiketsApp.ViewModels.Saller
             _timer.Tick += OnDayChanged;
             _timer.Start();
             _canEditCount = true;
-            _currentDate = DateTime.Today;
+            _currentDate = DateTime.Today.AddDays(1);
             CurrentEndDate = _currentDate;
 
 
@@ -279,24 +279,25 @@ namespace TiketsApp.ViewModels.Saller
             _rows = seatsMap?.RowsCount ?? 1;
             _seats = seatsMap?.SeatsCount ?? 1;
 
-            _startDate = _event?.StartTime ?? DateTime.Now;
+            _startDate = _event?.StartTime ?? DateTime.Now.AddDays(1);
 
             _adress = _event?.Adress ?? string.Empty;
 
             _priceStr = _event?.Price.ToString() ?? "";
 
-            _endDate = _event?.EndTime ?? DateTime.Now.AddDays(1);
+            _endDate = _event?.EndTime ?? DateTime.Now.AddDays(2);
 
             Hours = InitTime(true);
             Minuts = InitTime(false);
 
             ImagePriviewVM = new Default();
 
-            _startMinuts = _event?.StartTime.Hour ?? Minuts[0];
-            _endMinuts = _event?.EndTime.Hour ?? Minuts[0];
+            
+            _endHours = _event?.StartTime.Hour ?? Hours[0];
+            _endMinuts = _event?.EndTime.Minute ?? Minuts[0];
 
-            _startHours = _event?.StartTime.Minute ?? Hours[0];
-            _endHours = _event?.StartTime.Minute ?? Hours[0];
+            _startHours = _event?.StartTime.Hour ?? Hours[0];
+            _startMinuts = _event?.StartTime.Minute ?? Minuts[0];
 
             if (_event?.SeatMap != null) HasSeataMap = true;
 
@@ -354,6 +355,8 @@ namespace TiketsApp.ViewModels.Saller
                     var loadedImages = context.Images.Where(i => i.Events.Contains(_event));
                     Images = new(loadedImages);
                     ImageVM = new ImagesVm(Images, this);
+
+                    CanChangeRowsAndSeats = context.Orders.Where(o => o.EventId == _event.Id).Any();
                 }
                 else
                 {
@@ -405,12 +408,14 @@ namespace TiketsApp.ViewModels.Saller
 
                 using AppContext appContext = new();
 
+                var subcategory = appContext.Categories.Find(Subcategory!.Id);
+
                 var newEvent = new Event()
                 {
                     Name = Title,
                     Description = Description,
                     RootCategory = appContext.Categories.Find(RootCategory!.Id),
-                    SubCategory = appContext.Categories.Find(Subcategory!.Id),
+                    SubCategory = subcategory,
                     MaxCount = MaxCount,
                     Saller = appContext.Sallers.Find(_saller.Id),
                     Emages = Images!.Select(i => new Image()
@@ -459,12 +464,22 @@ namespace TiketsApp.ViewModels.Saller
 
                 if (_event == null)
                 {
+                    subcategory!.ElementsInCategory = subcategory!.ElementsInCategory == null ? 1 : subcategory!.ElementsInCategory + 1;
+
                     appContext.Events.Add(newEvent);
                     appContext.SaveChanges();
                 }
                 else
                 {
                     var oldEvent = appContext.Events.Find(_event.Id)!;
+
+                    var oldCategory = appContext.Categories.Find(oldEvent.SubCategoryId);
+
+                    if (oldCategory!.Id != subcategory!.Id)
+                    {
+                        subcategory!.ElementsInCategory = subcategory!.ElementsInCategory == null ? 1 : subcategory!.ElementsInCategory + 1;
+                        oldCategory.ElementsInCategory = oldCategory.ElementsInCategory == 0 ? null : oldCategory.ElementsInCategory - 1;
+                    }
 
                     foreach (var item in appContext.Images.Include(i => i.Events))
                     {
@@ -474,7 +489,7 @@ namespace TiketsApp.ViewModels.Saller
                     oldEvent.Name = Title;
                     oldEvent.Description = Description;
                     oldEvent.RootCategory = appContext.Categories.Find(RootCategory!.Id);
-                    oldEvent.SubCategory = appContext.Categories.Find(Subcategory!.Id);
+                    oldEvent.SubCategory = subcategory;
                     oldEvent.MaxCount = MaxCount;
                     oldEvent.Saller = appContext.Sallers.Find(_saller.Id);
                     oldEvent.Emages = Images!.Select(i => new Image()
@@ -487,6 +502,12 @@ namespace TiketsApp.ViewModels.Saller
                     oldEvent.StartTime = startDate;
                     oldEvent.EndTime = endDate;
                     oldEvent.Adress = adress;
+
+                    appContext.Orders
+                      .Where(o => o.EventId == oldEvent.Id)
+                      .ExecuteUpdate(setter =>
+                      setter.SetProperty(o => o.Status, Status.Changed
+                      ));
 
                     appContext.SaveChanges();
                 }

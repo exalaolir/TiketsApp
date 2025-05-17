@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,10 +42,14 @@ namespace TiketsApp.Models
 
         public int SallerId { get; set; }
         public Saller? Saller { get; set; }
+
+        public List<Order> Orders { get; set; } = new List<Order>();
+
+        public bool IsDeleted { get; set; } = false;
     }
 
     [JsonConverter(typeof(SeatMapJsonConverter))]
-    public sealed class SeatMap
+    public sealed class SeatMap 
     {
         private readonly List<Row> _rows;
 
@@ -73,6 +78,10 @@ namespace TiketsApp.Models
                     _seats.Add(new Seat(i));
                 }
             }
+
+            public void ForEach ( Action<Seat> action ) => _seats.ForEach(action);
+
+            public bool HasEmptySeat() => _seats.Any(s => !s.IsOwned);
         }
 
         public class Seat
@@ -82,7 +91,7 @@ namespace TiketsApp.Models
 
             public Seat ( int number )
             {
-                Number = number;
+                Number = number + 1;
             }
         }
 
@@ -93,8 +102,11 @@ namespace TiketsApp.Models
             _rows = new List<Row>(rows);
             for (int i = 0; i < rows; i++)
             {
-                _rows.Add(new Row(seats, i));
+                _rows.Add(new Row(seats, i)); 
             }
         }
+
+        public void ForEach( Action<Row> action ) => _rows.ForEach(action);
+
     }
 }

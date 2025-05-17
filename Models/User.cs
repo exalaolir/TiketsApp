@@ -9,5 +9,7 @@ namespace TiketsApp.Models
     public sealed class User : Role
     {
         public DateTime Birthday { get; set; }
+
+        public List<Order> Orders { get; set; } = new List<Order>();
     }
 }

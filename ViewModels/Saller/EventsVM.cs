@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using TiketsApp.Core.Servises;
 using TiketsApp.Migrations;
@@ -32,7 +33,7 @@ namespace TiketsApp.ViewModels.Saller
 
         public string Cost => $"{string.Format("{0:C2}", _event.Price)}";
 
-        public bool IsEnd => DateTime.Now >= _event.EndTime;
+        public bool IsEnd => DateTime.Now >= _event.StartTime;
 
         public bool IsEndReverse => !IsEnd;
 
@@ -45,6 +46,8 @@ namespace TiketsApp.ViewModels.Saller
         public string Status => IsEnd ? "Завершено" : "Не завершено";
 
         public ICommand ChangeCommand => _eventsVM.NavigateToNewEventCommand;
+
+        public ICommand DeleteCommand => _eventsVM.DeleteCommand;
 
         public FullIventVM ( Models.Event newEevent, EventsVM eventsVM )
         {
@@ -65,7 +68,7 @@ namespace TiketsApp.ViewModels.Saller
 
         public ICommand GetFullInfoCommand { get; }
 
-        public bool IsEnd => DateTime.Now >= _event.EndTime;
+        public bool IsEnd => DateTime.Now >= _event.StartTime;
 
         public string Status => IsEnd ? "Завершено" : "Не завершено";
 
@@ -74,7 +77,15 @@ namespace TiketsApp.ViewModels.Saller
             _event = newEevent;
             _eventsVM = eventsVM;
 
-            GetFullInfoCommand = new Command (() => _eventsVM.FullCardInfoVM = new FullIventVM(_event, eventsVM));
+            GetFullInfoCommand = new Command (() =>
+            {
+                _eventsVM.FullCardInfoVM = new FullIventVM(_event, eventsVM);
+                _eventsVM!.Users!.Clear();
+                foreach (var item in _event.Orders.Select(o => o.User))
+                {
+                    _eventsVM!.Users!.Add(item!);
+                }
+            });
         }
     }
 
@@ -87,10 +98,16 @@ namespace TiketsApp.ViewModels.Saller
         private dynamic _fullCardInfoVM;
 
         public ObservableCollection<IventCardVM>? Events { get; private set; }
-        
+
+        public ObservableCollection<User>? Users { get;  set; }
+
         public ICommand NavigateToNewEventCommand { get; }
 
         public ICommand ChangeCommand { get; }
+
+        public ICommand DeleteCommand { get; }
+
+
 
         public bool DataLoaded
         {
@@ -101,7 +118,10 @@ namespace TiketsApp.ViewModels.Saller
         public dynamic FullCardInfoVM
         {
             get => _fullCardInfoVM;
-            set => this.SetValue(ref _fullCardInfoVM, value);
+            set
+            {
+                this.SetValue(ref _fullCardInfoVM, value);
+            }
         }
 
         public EventsVM ( object? param, Navigation navigator )
@@ -109,6 +129,8 @@ namespace TiketsApp.ViewModels.Saller
             _navigator = navigator;
             _param = param;
             _saller = (Models.Saller)param!;
+
+            Users = [];
 
             _fullCardInfoVM = new Default();
 
@@ -125,6 +147,32 @@ namespace TiketsApp.ViewModels.Saller
                 _navigator.NavigateTo<NewEventPage>(typeof(NewEventVM), new NewEventDto(_saller, param));
 
             });
+
+            DeleteCommand = new Command<FullIventVM>(item =>
+            {
+                DataLoaded = false;
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    using AppContext appContext = new ();
+
+                    var @event = appContext.Events.Find(item.Event.Id);
+
+                    var category = appContext.Categories.Find(@event!.SubCategoryId);
+
+                    category!.ElementsInCategory = category!.ElementsInCategory > 0 ? category!.ElementsInCategory - 1 : null;
+
+                    appContext.Orders
+                        .Where(o => o.EventId == @event!.Id)
+                        .ExecuteUpdate(setter => 
+                        setter.SetProperty(o => o.Status, Status.RejectByUser
+                        ));
+
+                    
+                    @event!.IsDeleted = true;
+                    appContext.SaveChanges();
+                    _navigator.Reload();
+                });
+            });
         }
 
         private async Task LoadData ()
@@ -136,8 +184,11 @@ namespace TiketsApp.ViewModels.Saller
                 using AppContext context = new();
 
                 var loadedData = context.Events
+                .Where(e => !e.IsDeleted)
                 .Include(i => i.Emages)
                 .Include(i => i.RootCategory)
+                .Include(i => i.Orders)
+                    .ThenInclude(o => o.User)
                 .Include(i => i.SubCategory).ToList();
 
                 Events = [];

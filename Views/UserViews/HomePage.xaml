@@ -13,31 +13,29 @@
 
     <DockPanel LastChildFill="True">
         <Menu DockPanel.Dock="Top">
-            <MenuItem>
+            <MenuItem Command="{Binding BackCommand}" IsEnabled="{Binding CanGoBack}">
                 <MenuItem.Icon>
                     <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE973;" />
                 </MenuItem.Icon>
             </MenuItem>
 
-            <MenuItem>
+            <MenuItem Command="{Binding FrontCommand}" IsEnabled="{Binding CanGoFront}">
                 <MenuItem.Icon>
                     <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE974;" />
                 </MenuItem.Icon>
             </MenuItem>
 
-            <MenuItem>
+            <MenuItem Command="{Binding RefreshCommand}">
                 <MenuItem.Icon>
                     <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE777;" />
                 </MenuItem.Icon>
             </MenuItem>
 
-            <MenuItem Header="Главная" />
+            <MenuItem Header="Главная" Command="{Binding NavigateTuHabCommand}"/>
 
             <MenuItem Header="Каталог" Command="{Binding NavigateToCatalogCommand}"/>
 
-            <MenuItem Header="Профиль" />
-
-            <MenuItem Header="Мои билеты" />
+            <MenuItem Header="Выход" Command="{Binding ExitCommand}" />
         </Menu>
 
 

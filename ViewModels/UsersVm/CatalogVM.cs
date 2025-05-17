@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Panuon.WPF.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,6 +20,10 @@ namespace TiketsApp.ViewModels.UsersVm
     {
         private readonly Event _newEvent;
         private readonly CatalogVM _catalogVM;
+        private Order? _order;
+        private readonly string _btnText;
+
+        public Order? Order => _order;
 
         public Event Event => _newEvent;
 
@@ -30,14 +35,19 @@ namespace TiketsApp.ViewModels.UsersVm
 
         public string Desciption => _newEvent.Description;
 
+        public string BtnText => _btnText;
+
         public string Price => string.Format("{0:C2}", _newEvent.Price);
 
         public ICommand WatchPriview { get; }
 
-        public EventCardVM ( Event newEvent, CatalogVM catalogVM )
+        public EventCardVM ( Event newEvent, CatalogVM catalogVM, Order? order )
         {
             _catalogVM = catalogVM;
             _newEvent = newEvent;
+            _order = order;
+
+            _btnText = order == null || order.Status == Status.RejectByUser ? "Подробнее" : "Изменить бронь";
 
             WatchPriview = _catalogVM.WatchPriviewCommand;
         }
@@ -49,6 +59,7 @@ namespace TiketsApp.ViewModels.UsersVm
         private readonly User? _user;
         private bool _dataLoaded;
 
+        
         public ObservableCollection<EventCardVM>? Events { get; private set; }
 
         public bool DataLoaded
@@ -62,6 +73,7 @@ namespace TiketsApp.ViewModels.UsersVm
 
         public ICommand WatchPriviewCommand { get; }
 
+
         public CatalogVM ( object? param, Navigation navigator )
         {
             _navigator = navigator;
@@ -70,7 +82,13 @@ namespace TiketsApp.ViewModels.UsersVm
 
             WatchPriviewCommand = new Command<EventCardVM>(card =>
             {
-                var dto = new PriviewEventDto(_user!, card.Event);
+                Order? order;
+
+                if (card.Order == null || card.Order.Status == Status.RejectByUser)
+                    order = null;
+                else order = card.Order;
+
+                    var dto = new PriviewEventDto(_user!, card.Event, order);
 
                 _navigator.NavigateTo<PriviewPage>(typeof(PriviewVM), dto); 
             });
@@ -86,11 +104,18 @@ namespace TiketsApp.ViewModels.UsersVm
 
                 using AppContext appContext = new();
 
-                var data = appContext.Events.Where(e => DateTime.Now < e.StartTime).Include(e => e.Emages).Include(e => e.Saller).ToList();
+                var data = appContext.Events.Where(e => DateTime.Now < e.StartTime && !e.IsDeleted)
+                .Include(e => e.Emages)
+                .Include(e => e.Saller)
+                .Include(e =>e.Orders)
+                .ToList();
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    data.ForEach(e => Events.Add(new EventCardVM(e, this)));
+                    data.ForEach(e => Events.Add(
+                        new EventCardVM(e, 
+                        this, 
+                        e.Orders.FirstOrDefault(o => o.UserId == _user!.Id))));
                 });
             });
 

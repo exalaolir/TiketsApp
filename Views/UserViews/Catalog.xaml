@@ -87,8 +87,8 @@
                                                 <Button 
                                                     Command="{Binding WatchPriview}"
                                                     CommandParameter="{Binding}"
-                                                    Margin="0,0,10,0" Style="{DynamicResource AccentButtonStyle}">Подробнее</Button>
-                                                <Button Margin="0,0,10,0">Забронировать</Button>
+                                                    Margin="0,0,10,0" Style="{DynamicResource AccentButtonStyle}" 
+                                                    Content="{Binding BtnText}"></Button>
                                             </WrapPanel>
                                         </Grid>
                                     </Grid>
