@@ -67,7 +67,7 @@
                         <Label Grid.Row="0" Content="Пароль" />
                         <PasswordBox
                             Grid.Row="1"
-                            PasswordChanged="SetPassword"
+                            x:Name="passwordBox"
                             Style="{StaticResource FluentPassBoxStyle}" />
                     </Grid>
 

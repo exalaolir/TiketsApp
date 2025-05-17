@@ -16,6 +16,7 @@
             x:Name="MainFrame"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            JournalOwnership="OwnsJournal"
             NavigationUIVisibility="Hidden" />
     </Grid>
 </Window>

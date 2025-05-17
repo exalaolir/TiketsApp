@@ -1,4 +1,7 @@
-﻿using System;
+﻿using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,7 +20,7 @@ using TiketsApp.Views;
 
 namespace TiketsApp.ViewModels.UsersVm
 {
-    internal sealed partial class HabVM : ValidationViewModel, IPassword, IRepeatPassword, IDateTimer
+    internal sealed partial class HabVM : ValidationViewModel, IPassword, IRepeatPassword, IDateTimer, IDisposable
     {
         private DateTime _currentDate;
         private readonly DispatcherTimer _timer;
@@ -29,6 +32,7 @@ namespace TiketsApp.ViewModels.UsersVm
         private string _repeatPassword;
         private DateTime _birthday;
         private bool _dataLoaded;
+        private bool _disposed;
 
         [Required(ErrorMessage = Consts.ReqiredMessage)]
         [RegularExpression(Consts.FioPattern, ErrorMessage = Consts.NameError)]
@@ -202,6 +206,28 @@ namespace TiketsApp.ViewModels.UsersVm
                     _navigator!.Reload();
                 });
             });
+        }
+
+        public void Dispose ()
+        {
+            if (_disposed) return;
+
+            _timer.Stop();
+            _timer.Tick -= OnDayChanged;
+
+            _cts?.Cancel();
+
+            _timerOfUpdate?.Dispose();
+
+            _cts?.Dispose();
+
+            Series = Array.Empty<ISeries>(); // Важно!
+            XAxes = Array.Empty<Axis>();
+            YAxes = Array.Empty<Axis>();
+
+
+
+            _disposed = true;
         }
     }
 }

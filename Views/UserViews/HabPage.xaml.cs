@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,8 @@ namespace TiketsApp.Views.UserViews
         public HabPage ()
         {
             InitializeComponent();
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
         }
 
         private void SetPassword ( object sender, RoutedEventArgs e )
@@ -47,12 +50,46 @@ namespace TiketsApp.Views.UserViews
             e.Handled = true;
         }
 
+        private void OnLoaded ( object sender, RoutedEventArgs e )
+        {
+            // Подписка на события
+            passwordBox.PasswordChanged += SetPassword;
+            repeatPasswordBox.PasswordChanged += SetRepeatPassword;
+            datePicker.PreviewTextInput += DatePicker_PreviewTextInput;
+            datePicker.PreviewKeyDown += DatePicker_PreviewKeyDown;
+        }
+
+        private void OnUnloaded ( object sender, RoutedEventArgs e )
+        {
+            // Отписка от событий
+            passwordBox.PasswordChanged -= SetPassword;
+            repeatPasswordBox.PasswordChanged -= SetRepeatPassword;
+            datePicker.PreviewTextInput -= DatePicker_PreviewTextInput;
+            datePicker.PreviewKeyDown -= DatePicker_PreviewKeyDown;
+
+            // Отписка от Loaded/Unloaded
+            Loaded -= OnLoaded;
+            Unloaded -= OnUnloaded;
+
+            if (DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+                //DataContext = null;
+            }
+        }
+
+
         private void DatePicker_PreviewKeyDown ( object sender, KeyEventArgs e )
         {
             if (e.Key != Key.Tab && e.Key != Key.Enter && e.Key != Key.Escape)
             {
                 e.Handled = true;
             }
+        }
+
+        ~HabPage ()
+        {
+            Debug.WriteLine($"Уничтожена страница: {GetType().Name}");
         }
     }
 }
