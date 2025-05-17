@@ -156,7 +156,7 @@ namespace TiketsApp.ViewModels.Saller
                     _validFields[2] = true;
                     OnPropertyChanged(nameof(IsButtonEnabled));
 
-                    Subcategories = new(value?.ChildCategories ?? []);
+                    Subcategories = new(value?.ChildCategories.Where(c => !c.IsBlocked) ?? []);
                     OnPropertyChanged(nameof(Subcategories));
                     if (value != null) SubcatigoryVisible = true;
                 }
@@ -293,7 +293,7 @@ namespace TiketsApp.ViewModels.Saller
             ImagePriviewVM = new Default();
 
             
-            _endHours = _event?.StartTime.Hour ?? Hours[0];
+            _endHours = _event?.EndTime.Hour ?? Hours[0];
             _endMinuts = _event?.EndTime.Minute ?? Minuts[0];
 
             _startHours = _event?.StartTime.Hour ?? Hours[0];
@@ -373,8 +373,13 @@ namespace TiketsApp.ViewModels.Saller
 
             if(_event != null)
             {
-                RootCategory = _event?.RootCategory;
+                using AppContext context = new();
+                RootCategory = context.Categories.Where(e => e.Id == _event.RootCategory.Id).Include(c => c.ChildCategories).First();
+
+                Subcategories = new(RootCategory?.ChildCategories.Where(c => !c.IsBlocked) ?? []);
                 Subcategory = _event?.SubCategory;
+                if (!Subcategories.Contains(Subcategory!)) Subcategories.Add(Subcategory!);
+                OnPropertyChanged(nameof(Subcategories));
             }
             DataLoaded = true;
         }
