@@ -20,7 +20,57 @@
         <Grid>
             <DockPanel LastChildFill="True" Visibility="{Binding DataLoaded, Converter={StaticResource BoolToVisibleConverter}}">
                 <Menu DockPanel.Dock="Top">
-                    <MenuItem Header="uujuhjui" />
+                    <MenuItem Header="Сортировать">
+                        <MenuItem Command="{Binding SortByDateDes}" Header="По дате начала(убывание)" />
+
+                        <MenuItem Command="{Binding SortByDate}" Header="По дате начала(Возрастание)" />
+
+                        <MenuItem Command="{Binding SortByName}" Header="По названию" />
+
+                        <MenuItem Command="{Binding SortByCount}" Header="По популярности" />
+
+                        <MenuItem Command="{Binding SortByPrice}" Header="По цене" />
+                    </MenuItem>
+
+                    <MenuItem Header="Диапазон цен">
+                        <StackPanel Width="300">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80*" />
+                                    <ColumnDefinition Width="20*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Slider
+                                    Margin="0,0,10,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    Maximum="{Binding Max}"
+                                    Minimum="{Binding Min}"
+                                    Value="{Binding CurrentPrice}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Text="{Binding CurrentPrice, StringFormat={}{0:N2}}" />
+
+                            </Grid>
+
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding FilterByPrice}"
+                                Content="Применить"
+                                Style="{DynamicResource AccentButtonStyle}" />
+                        </StackPanel>
+                    </MenuItem>
+                    <MenuItem Header="Поиск">
+                        <StackPanel Width="300">
+                            <TextBox Margin="0,0,0,15" Text="{Binding SearchText}" />
+                            <Button
+                                HorizontalAlignment="Stretch"
+                                Command="{Binding Search}"
+                                Content="Поиск" />
+                        </StackPanel>
+                    </MenuItem>
                 </Menu>
 
                 <ScrollViewer>
@@ -84,11 +134,12 @@
                                             </TextBlock>
 
                                             <WrapPanel Grid.Row="4">
-                                                <Button 
+                                                <Button
+                                                    Margin="0,0,10,0"
                                                     Command="{Binding WatchPriview}"
                                                     CommandParameter="{Binding}"
-                                                    Margin="0,0,10,0" Style="{DynamicResource AccentButtonStyle}" 
-                                                    Content="{Binding BtnText}"></Button>
+                                                    Content="{Binding BtnText}"
+                                                    Style="{DynamicResource AccentButtonStyle}" />
                                             </WrapPanel>
                                         </Grid>
                                     </Grid>

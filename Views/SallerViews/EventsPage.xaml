@@ -127,6 +127,26 @@
                 <DockPanel Grid.Column="0" LastChildFill="True">
                     <Menu DockPanel.Dock="Top">
                         <MenuItem Command="{Binding ChangeCommand}" Header="Новое мероприятие" />
+                        <MenuItem Header="Сортировать">
+                            <MenuItem Command="{Binding SortByDateDes}" Header="По дате начала(убывание)" />
+
+                            <MenuItem Command="{Binding SortByDate}" Header="По дате начала(Возрастание)" />
+
+                            <MenuItem Command="{Binding SortByName}" Header="По названию" />
+
+                            <MenuItem Command="{Binding SortByCount}" Header="По популярности" />
+
+                            <MenuItem Command="{Binding SortByPrice}" Header="По цене" />
+                        </MenuItem>
+                        <MenuItem Header="Поиск">
+                            <StackPanel Width="300">
+                                <TextBox Margin="0,0,0,15" Text="{Binding SearchText}" />
+                                <Button
+                                    HorizontalAlignment="Stretch"
+                                    Command="{Binding Search}"
+                                    Content="Поиск" />
+                            </StackPanel>
+                        </MenuItem>
                     </Menu>
 
                     <ScrollViewer>
@@ -239,7 +259,11 @@
                             Margin="5"
                             LastChildFill="True">
 
-                            <TextBlock DockPanel.Dock="Top" Margin="0, 0, 0, 10" Text="Клиенты" Style="{StaticResource SubtitleTextBlockStyle}"/>
+                            <TextBlock
+                                Margin="0,0,0,10"
+                                DockPanel.Dock="Top"
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="Клиенты" />
 
                             <ScrollViewer>
                                 <ItemsControl ItemsSource="{Binding Users}">
