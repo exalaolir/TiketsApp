@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -59,8 +60,103 @@ namespace TiketsApp.ViewModels.UsersVm
         private readonly User? _user;
         private bool _dataLoaded;
 
-        
+        private decimal _min;
+
+        public decimal Min
+        {
+            get => _min;
+            set
+            {
+                SetValue(ref _min, value);
+            }
+        }
+
+        private decimal _max;
+
+        public decimal Max
+        {
+            get => _max;
+            set
+            {
+                SetValue(ref _max, value);
+            }
+        }
+
+        private string _searchText;
+
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                SetValue(ref _searchText, value);
+            }
+        }
+
+        public ICommand Search => new Command(() =>
+        {
+            if (_searchText != string.Empty)
+            {
+                Events = new(Events!.Where(e => Regex.IsMatch(e.Title, $"^{Regex.Escape(_searchText)}", RegexOptions.IgnoreCase)));
+            }
+            else
+            {
+                Events = new(_events!);
+            }
+
+            OnPropertyChanged(nameof(Events));
+        });
+
+        private decimal _currentPrice;
+
+        public decimal CurrentPrice
+        {
+            get => _currentPrice;
+            set
+            {
+                SetValue(ref _currentPrice, value);
+            }
+        }
+
+        public ICommand SortByDateDes => new Command(() =>
+        {
+            Events = new(Events!.OrderByDescending(e => e.Event.StartTime));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand FilterByPrice => new Command(() =>
+        {
+            Events = new(_events!.Where(e => decimal.Parse(e.Price.TrimEnd([' ', 'B', 'r'])) <= CurrentPrice));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByDate => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e.Event.StartTime));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByName => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e.Event.Name));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByCount => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e.Event.Count));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByPrice => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e.Event.Price));
+            OnPropertyChanged(nameof(Events));
+        });
+
         public ObservableCollection<EventCardVM>? Events { get; private set; }
+
+        public ObservableCollection<EventCardVM>? _events { get; private set; }
 
         public bool DataLoaded
         {
@@ -116,6 +212,12 @@ namespace TiketsApp.ViewModels.UsersVm
                         new EventCardVM(e, 
                         this, 
                         e.Orders.FirstOrDefault(o => o.UserId == _user!.Id))));
+
+                    Max = data.Max(d => d.Price);
+                    Min = data.Min(d => d.Price);
+                    CurrentPrice = Max;
+
+                    _events = new(Events);
                 });
             });
 

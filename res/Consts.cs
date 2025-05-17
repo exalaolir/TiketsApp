@@ -39,7 +39,7 @@ namespace TiketsApp.res
 
         public const string PasswordPattern = @"^(?=.*[A-Z].*)(?=.*[!@#$&*])(?=.*[0-9].*)(?=.*[a-z].*).{8,}$";
 
-        public const string FioPattern = @"(^[a-zA-Z]+$)|(^[а-яА-Я]+$)";
+        public const string FioPattern = @"(^[a-zA-Z]+$)|(^([а-яА-Я]+|[Ёё]+)+$)";
 
         public const string NumPattern = @"^\d{10}$";
 

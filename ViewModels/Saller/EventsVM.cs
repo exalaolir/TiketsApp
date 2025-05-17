@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using TiketsApp.Core.Servises;
-using TiketsApp.Migrations;
 using TiketsApp.Models;
 using TiketsApp.Models.DTO;
 using TiketsApp.ViewModels.Admin;
@@ -58,7 +57,7 @@ namespace TiketsApp.ViewModels.Saller
 
     internal sealed class IventCardVM : ViewModel
     {
-        private readonly Models.Event _event;
+        public readonly Models.Event _event;
         private readonly EventsVM _eventsVM;
 
         public string Title => _event.Name;
@@ -97,6 +96,53 @@ namespace TiketsApp.ViewModels.Saller
         private readonly Models.Saller _saller;
         private dynamic _fullCardInfoVM;
 
+        public ICommand SortByDateDes => new Command(() =>
+        {
+            Events = new(Events!.OrderByDescending(e => e._event.StartTime));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByDate => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e._event.StartTime));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByName => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e._event.Name));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByCount => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e._event.Count));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand SortByPrice => new Command(() =>
+        {
+            Events = new(Events!.OrderBy(e => e._event.Price));
+            OnPropertyChanged(nameof(Events));
+        });
+
+        public ICommand Search => new Command(() =>
+        {
+            if (_searchText != string.Empty)
+            {
+                Events = new(Events!.Where(e => Regex.IsMatch(e.Title, $"^{Regex.Escape(_searchText)}", RegexOptions.IgnoreCase)));
+            }
+            else
+            {
+                Events = new(_events);
+            }
+
+                OnPropertyChanged(nameof(Events));
+        });
+
+        private ObservableCollection<IventCardVM> _events;
+
+
         public ObservableCollection<IventCardVM>? Events { get; private set; }
 
         public ObservableCollection<User>? Users { get;  set; }
@@ -107,7 +153,16 @@ namespace TiketsApp.ViewModels.Saller
 
         public ICommand DeleteCommand { get; }
 
+        private string _searchText;
 
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                SetValue(ref _searchText, value);
+            }
+        }
 
         public bool DataLoaded
         {
@@ -124,8 +179,11 @@ namespace TiketsApp.ViewModels.Saller
             }
         }
 
+
+
         public EventsVM ( object? param, Navigation navigator )
         {
+            _searchText = string.Empty;
             _navigator = navigator;
             _param = param;
             _saller = (Models.Saller)param!;
@@ -189,11 +247,12 @@ namespace TiketsApp.ViewModels.Saller
                 .Include(i => i.RootCategory)
                 .Include(i => i.Orders)
                     .ThenInclude(o => o.User)
-                .Include(i => i.SubCategory).ToList();
+                .Include(i => i.SubCategory).OrderByDescending(i => i.StartTime).ToList();
 
                 Events = [];
 
                 loadedData.ForEach(i => Events.Add(new IventCardVM(i, this)));
+                _events = new(Events);
             });
 
             OnPropertyChanged(nameof(Events));  

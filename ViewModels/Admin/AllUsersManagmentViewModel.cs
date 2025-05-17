@@ -402,6 +402,7 @@ namespace TiketsApp.ViewModels.Admin
             {
                 using AppContext context = new();
                 AllUsers = new(context.AllRoles
+                    .Where(r => r.Id != _admin!.Id)
                     .Select(r => new ShortUserCard(r, r.GetType().Name)));
                 AllUsersConst = new(AllUsers);
             });
