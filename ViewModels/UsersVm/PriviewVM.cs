@@ -25,7 +25,7 @@ namespace TiketsApp.ViewModels.UsersVm
         private bool _seatVisible;
         private SeatMap? _seatMap;
         private int _row;
-        private int _seat;
+        private int? _seat;
         private Order? _order;
         private string _btnText;
 
@@ -65,7 +65,7 @@ namespace TiketsApp.ViewModels.UsersVm
             }
         }
 
-        public int Seat
+        public int? Seat
         {
             get => _seat;
             set
@@ -120,6 +120,7 @@ namespace TiketsApp.ViewModels.UsersVm
                     Seats.Sort();
                 }
                 SeatVisible = true;
+                Seat = null;
                 OnPropertyChanged(nameof(Seats));
             }
         }
@@ -305,7 +306,7 @@ namespace TiketsApp.ViewModels.UsersVm
 
                 if (_seatMapVisible)
                 {
-                    _seatMap![Row][Seat].IsOwned = true;
+                    _seatMap![Row][(int)Seat!].IsOwned = true;
                     if(_order != null)
                     {
                         if (_order.Row != Row || _order.Seat != Seat)
