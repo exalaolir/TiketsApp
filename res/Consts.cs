@@ -9,7 +9,7 @@ namespace TiketsApp.res
 {
     internal sealed class Consts
     {
-       public const string SqlConnection = @"Server=DESKTOP-HJGN3L3;Database=tickets;Trusted_Connection=True;TrustServerCertificate=True;" +
+       public const string SqlConnection = @"Server=DESKTOP-1OQH158;Database=tickets;Trusted_Connection=True;TrustServerCertificate=True;" +
             "Pooling=true;" +
                       "Min Pool Size=5;" +
                       "Max Pool Size=100;" +

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Itenso.TimePeriod;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -292,7 +293,7 @@ namespace TiketsApp.ViewModels.Saller
 
             ImagePriviewVM = new Default();
 
-            
+
             _endHours = _event?.EndTime.Hour ?? Hours[0];
             _endMinuts = _event?.EndTime.Minute ?? Minuts[0];
 
@@ -371,7 +372,7 @@ namespace TiketsApp.ViewModels.Saller
             OnPropertyChanged(nameof(Categories));
             OnPropertyChanged(nameof(Images));
 
-            if(_event != null)
+            if (_event != null)
             {
                 using AppContext context = new();
                 RootCategory = context.Categories.Where(e => e.Id == _event.RootCategory.Id).Include(c => c.ChildCategories).First();
@@ -449,7 +450,14 @@ namespace TiketsApp.ViewModels.Saller
                 {
                     foreach (var conflictingEvent in sameField)
                     {
-                        if (conflictingEvent?.Adress == adress && conflictingEvent.EndTime >= newEvent.StartTime)
+                        var period1 = new TimeRange(newEvent.StartTime, newEvent.EndTime);
+
+                        var period2 = new TimeRange(
+                            conflictingEvent.StartTime, conflictingEvent.EndTime);
+
+                        bool hasTimeIntercept = period1.IntersectsWith(period2);
+
+                        if (conflictingEvent?.Adress == adress && hasTimeIntercept)
                         {
                             SetValidationResults(false, nameof(Adress), ["Место уже занято"]);
                             return;
@@ -458,7 +466,7 @@ namespace TiketsApp.ViewModels.Saller
                         {
                             SetValidationResults(true, nameof(Adress), [""]);
                         }
-                        if (conflictingEvent?.Saller!.Id == _saller.Id && conflictingEvent.Name == Title)
+                        if (conflictingEvent?.SallerId == _saller.Id && conflictingEvent.Name == Title)
                         {
                             SetValidationResults(false, nameof(Title), ["Название уже занято"]);
                             return;
