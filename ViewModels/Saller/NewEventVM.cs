@@ -434,6 +434,7 @@ namespace TiketsApp.ViewModels.Saller
                     .Where(e =>
                         (e.Saller == _saller && e.Name == Title) ||
                         e.Adress == adress)
+                    .Where(e => !e.IsDeleted)
                     .ToList();
 
                 if (_event != null)
