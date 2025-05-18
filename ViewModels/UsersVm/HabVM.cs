@@ -217,9 +217,17 @@ namespace TiketsApp.ViewModels.UsersVm
             Application.Current.Dispatcher.Invoke(() =>
             {
                 using AppContext context = new();
+
                 var @event = context.Events.Find(CurrentEvent!.EventId);
 
-                context.Events.Remove(@event!);
+                var orders = context.Orders.Where(o => o.EventId == CurrentEvent!.EventId);
+
+
+                if(orders.Count() > 1)
+                {
+                    context.Orders.Remove(orders.First(o => o.EventId == CurrentEvent!.EventId));
+                }
+                else context.Events.Remove(@event!);
                 context.SaveChanges();
                 _navigator!.Reload();
             });
