@@ -227,6 +227,10 @@ namespace TiketsApp.ViewModels.Saller
 
                     
                     @event!.IsDeleted = true;
+
+                    if (!appContext.Orders.Where(o => o.EventId == @event!.Id).Any())
+                        appContext.Events.Remove(@event);
+
                     appContext.SaveChanges();
                     _navigator.Reload();
                 });
