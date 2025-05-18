@@ -242,7 +242,7 @@ namespace TiketsApp.ViewModels.Saller
                 using AppContext context = new();
 
                 var loadedData = context.Events
-                .Where(e => !e.IsDeleted)
+                .Where(e => !e.IsDeleted && e.SallerId == _saller.Id)
                 .Include(i => i.Emages)
                 .Include(i => i.RootCategory)
                 .Include(i => i.Orders)

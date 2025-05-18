@@ -71,7 +71,7 @@ namespace TiketsApp.ViewModels.UsersVm
             set
             {
                 SetValue(ref _seat, value);
-                _validFields[1] = true;
+                if(value != null) _validFields[1] = true;
                 OnPropertyChanged(nameof(IsButtonEnabled));
             }
         }
@@ -114,9 +114,9 @@ namespace TiketsApp.ViewModels.UsersVm
                         Seats.Add(seat.Number);
                 });
 
-                if (_order != null)
+                if (_order != null && _row == (int)_order.Row!)
                 {
-                    Seats.Add(_seatMap[_row][(int)_order.Seat!].Number);
+                    Seats.Add(_seatMap[(int)_order.Row!][(int)_order.Seat!].Number);
                     Seats.Sort();
                 }
                 SeatVisible = true;
