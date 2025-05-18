@@ -106,22 +106,18 @@ namespace TiketsApp.ViewModels.UsersVm
                 SetValue(ref _row, value);
                 _validFields[0] = true;
                 OnPropertyChanged(nameof(IsButtonEnabled));
-                if (Seats == null)
+                Seats = new(_seatMap!.SeatsCount);
+
+                _seatMap![_row].ForEach(seat =>
                 {
-                    Seats = new(_seatMap!.SeatsCount);
+                    if (!seat.IsOwned)
+                        Seats.Add(seat.Number);
+                });
 
-                    _seatMap![_row].ForEach(seat =>
-                    {
-                        if (!seat.IsOwned)
-                            Seats.Add(seat.Number);
-                    });
-
-                    if (_order != null)
-                    {
-                        Seats.Add(_seatMap[_row][(int)_order.Seat!].Number);
-                        Seats.Sort();
-                    }
-
+                if (_order != null)
+                {
+                    Seats.Add(_seatMap[_row][(int)_order.Seat!].Number);
+                    Seats.Sort();
                 }
                 SeatVisible = true;
                 OnPropertyChanged(nameof(Seats));
