@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,24 @@ namespace TiketsApp.Views
         public LoginPage ()
         {
             InitializeComponent();
+            Loaded += OnLoaded;
+            Unloaded += OnUnloaded;
+        }
+
+        private void OnLoaded ( object sender, RoutedEventArgs e )
+        {
+            // Подписываемся на события
+            passwordBox.PasswordChanged += SetPassword;
+        }
+
+        private void OnUnloaded ( object sender, RoutedEventArgs e )
+        {
+            passwordBox.PasswordChanged -= SetPassword;
+
+            Loaded -= OnLoaded;
+            Unloaded -= OnUnloaded;
+
+            DataContext = null;
         }
 
         private void SetPassword ( object sender, RoutedEventArgs e )
@@ -32,6 +51,11 @@ namespace TiketsApp.Views
             {
                 passProperty.Password = box.Password;
             }
+        }
+
+        ~LoginPage ()
+        {
+            Debug.WriteLine($"Уничтожена страница: {GetType().Name}");
         }
     }
 }

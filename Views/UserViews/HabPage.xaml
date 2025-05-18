@@ -76,8 +76,7 @@
                             <DatePicker
                                 Grid.Row="1"
                                 DisplayDateEnd="{Binding CurrentDate}"
-                                PreviewKeyDown="DatePicker_PreviewKeyDown"
-                                PreviewTextInput="DatePicker_PreviewTextInput"
+                                x:Name="datePicker"
                                 SelectedDate="{Binding Birthday}" />
                         </Grid>
 
@@ -101,7 +100,7 @@
                             <Label Grid.Row="0" Content="Новый пароль" />
                             <PasswordBox
                                 Grid.Row="1"
-                                PasswordChanged="SetPassword"
+                                x:Name="passwordBox"
                                 Style="{StaticResource FluentPassBoxStyle}" />
                         </Grid>
 
@@ -113,7 +112,7 @@
                             <Label Grid.Row="0" Content="Повторите новый пароль" />
                             <PasswordBox
                                 Grid.Row="1"
-                                PasswordChanged="SetRepeatPassword"
+                                x:Name="repeatPasswordBox"
                                 Style="{StaticResource FluentRepeatPassBoxStyle}" />
                         </Grid>
 

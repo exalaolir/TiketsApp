@@ -304,5 +304,10 @@ namespace TiketsApp.ViewModels.UsersVm
             OnPropertyChanged(nameof(YAxes));
             DataLoaded = true;
         }
+
+        ~HabVM ()
+        {
+            Debug.WriteLine($"Уничтожена страница: {GetType().Name}");
+        }
     }
 }
