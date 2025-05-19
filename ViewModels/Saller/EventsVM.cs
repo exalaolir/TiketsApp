@@ -116,7 +116,7 @@ namespace TiketsApp.ViewModels.Saller
 
         public ICommand SortByCount => new Command(() =>
         {
-            Events = new(Events!.OrderBy(e => e._event.Count));
+            Events = new(Events!.OrderByDescending(e => e._event.Count));
             OnPropertyChanged(nameof(Events));
         });
 
